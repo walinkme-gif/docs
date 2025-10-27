@@ -256,8 +256,6 @@ Use this to verify:
 
 - **[Real-Time Events Documentation](./02-Real-Time-Events.md)** - Detailed payload structures for each event
 - **[Batch Sync Documentation](./03-Batch-Sync.md)** - Full chat synchronization details
-- **[Data Models](./04-Data-Models.md)** - Complete field reference
-- **[Examples](./05-Examples.md)** - Real-world payload examples
 
 ---
 
