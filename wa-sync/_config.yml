@@ -1,0 +1,96 @@
+# Site settings
+title: WA-Sync Documentation
+description: Complete API documentation for WA-Sync - A Chrome extension that forwards WhatsApp Web events to your webhook endpoint
+baseurl: "/docs" # the subpath of your site, e.g. /blog
+url: "https://walinkme-gif.github.io" # the base hostname & protocol for your site
+repository: walinkme-gif/docs
+
+# Build settings
+markdown: kramdown
+theme: jekyll-theme-cayman
+
+# Enable kramdown features
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: true
+
+# Plugins
+plugins:
+  - jekyll-relative-links
+  - jekyll-optional-front-matter
+  - jekyll-readme-index
+  - jekyll-titles-from-headings
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Jekyll relative links
+relative_links:
+  enabled: true
+  collections: false
+
+# Optional front matter
+optional_front_matter:
+  remove_originals: false
+
+# Titles from headings
+titles_from_headings:
+  enabled: true
+  strip_title: true
+  collections: false
+
+# Navigation
+navigation:
+  - title: Home
+    url: /
+  - title: Overview
+    url: /overview
+  - title: Real-Time Events
+    url: /real-time-events
+  - title: Batch Sync
+    url: /batch-sync
+  - title: Getting Started
+    url: /getting-started
+  - title: Examples
+    url: /examples
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - README.md
+
+# Default front matter
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "default"
+
+# SEO settings
+author: walinkme-gif
+twitter:
+  username: 
+  card: summary
+
+# Google Analytics (optional - add your ID)
+# google_analytics: UA-XXXXXXXX-X
