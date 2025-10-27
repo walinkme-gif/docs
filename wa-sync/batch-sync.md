@@ -84,9 +84,9 @@ If `webhookUrl = "https://api.example.com/whatsapp"` and `syncEndpoint = "/chat"
   "timestamp": 1730000000000,
   "instanceId": "wa-sync-1730000000000-abc123xyz",
   "chat": {
-    "id": "1234567890@c.us",
+    "id": "1234567121890@lif",
     "name": "John Doe",
-    "userId": "+1234567890"
+    "userId": "+1234567890@c.us"
   },
   "batch": {
     "number": 1,
@@ -114,20 +114,25 @@ If `webhookUrl = "https://api.example.com/whatsapp"` and `syncEndpoint = "/chat"
 {
   "id": "1234567890@c.us",
   "name": "John Doe",
-  "userId": "+1234567890"
+  "userId": "1234567890@c.us"
 }
 ```
 
 | Field | Type | Description | Examples |
 |-------|------|-------------|----------|
-| `id` | string | WhatsApp chat ID | `1234567890@c.us` (personal)<br>`123456789@g.us` (group)<br>`123@newsletter` (channel) |
+| `id` | string | WhatsApp chat ID | `1234567890@lid` (newer accounts with LID)<br>`1234567890@c.us` (classic personal chat)<br>`123456789@g.us` (group)<br>`123@newsletter` (channel) |
 | `name` | string | Chat display name | Contact name, group name, or channel name |
-| `userId` | string or null | Phone number | `"+1234567890"` for contacts<br>`null` for groups/channels |
+| `userId` | string or null | Phone number or user ID | `"1234567890@c.us"` for contacts<br>`"1234567890@lid"` for LID accounts<br>`null` for groups/channels |
+
+**Important: LID vs Classic IDs:**
+- **If `id` is `@lid` format:** The `userId` will also be `@lid`, and phone number (if needed) should be extracted from message-level `phoneNumber` fields
+- **If `id` is `@c.us` format:** The ID directly represents the phone number
+- **Groups/Channels:** No phone number, `userId` is null
 
 **Note:** `userId` may be a string or an object with `_serialized` property:
 ```json
-"userId": "+1234567890"  // OR
-"userId": { "_serialized": "+1234567890" }
+"userId": "1234567890@c.us"  // OR
+"userId": { "_serialized": "1234567890@c.us" }
 ```
 
 ### Batch Object
@@ -169,7 +174,7 @@ Each message has the same structure as real-time `message` events. See [Real-Tim
     "hasMedia": false,
     "fromChat": {
       "id": "1234567890@c.us",
-      "phoneNumber": "+1234567890"
+      "phoneNumber": "+1234567890@c.us"
     },
     "toChat": {
       "id": "0987654321@c.us",
@@ -192,12 +197,12 @@ Each message has the same structure as real-time `message` events. See [Real-Tim
     "fromMe": true,
     "hasMedia": false,
     "fromChat": {
-      "id": "0987654321@c.us",
-      "phoneNumber": "+0987654321"
+      "id": "1234564354321@lid",
+      "phoneNumber": "+0987654321@c.us"
     },
     "toChat": {
-      "id": "1234567890@c.us",
-      "phoneNumber": "+1234567890"
+      "id": "1234567890@lid",
+      "phoneNumber": "+1234567890@c.us"
     }
   }
   // ... up to 50 messages total

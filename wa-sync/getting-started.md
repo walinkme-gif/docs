@@ -113,6 +113,37 @@ function handleMessage(message) {
   // Store in database, trigger workflows, etc.
 }
 
+function extractPhone(chatObj) {
+  if (!chatObj) return null;
+  
+  // Handle different ID formats
+  const chatId = chatObj.id || '';
+  const phoneNumber = chatObj.phoneNumber;
+  
+  // If ID is @lid format, use phoneNumber field
+  if (chatId.includes('@lid')) {
+    return extractPhoneValue(phoneNumber);
+  }
+  
+  // If ID is @c.us format, it IS the phone number
+  if (chatId.includes('@c.us')) {
+    return chatId.replace('@c.us', '');
+  }
+  
+  // Fallback to phoneNumber field
+  return extractPhoneValue(phoneNumber);
+}
+
+function extractPhoneValue(phone) {
+  if (typeof phone === 'string') {
+    return phone.replace('@c.us', '').replace('@lid', '');
+  }
+  if (phone && phone._serialized) {
+    return phone._serialized.replace('@c.us', '').replace('@lid', '');
+  }
+  return null;
+}
+
 function handleAck(ackInfo) {
   console.log(`Message ${ackInfo.messageId} ack changed to ${ackInfo.ack}`);
   // Update message status in database
@@ -175,10 +206,37 @@ def chat_sync():
     return jsonify({'success': True}), 200
 
 def handle_message(message):
-    phone = message['fromChat']['phoneNumber']
+    phone = extract_phone(message['fromChat'])
     body = message['body']
     print(f"New message from {phone}: {body}")
     # Store in database, trigger workflows, etc.
+
+def extract_phone(chat_obj):
+    """Extract phone number from chat object handling @lid and @c.us formats"""
+    if not chat_obj:
+        return None
+    
+    chat_id = chat_obj.get('id', '')
+    phone_number = chat_obj.get('phoneNumber')
+    
+    # If ID is @lid format, use phoneNumber field
+    if '@lid' in chat_id:
+        return extract_phone_value(phone_number)
+    
+    # If ID is @c.us format, it IS the phone number
+    if '@c.us' in chat_id:
+        return chat_id.replace('@c.us', '')
+    
+    # Fallback to phoneNumber field
+    return extract_phone_value(phone_number)
+
+def extract_phone_value(phone):
+    """Extract phone value from string or object"""
+    if isinstance(phone, str):
+        return phone.replace('@c.us', '').replace('@lid', '')
+    if isinstance(phone, dict) and '_serialized' in phone:
+        return phone['_serialized'].replace('@c.us', '').replace('@lid', '')
+    return None
 
 def handle_ack(ack_info):
     msg_id = ack_info['messageId']
@@ -240,10 +298,40 @@ http_response_code(200);
 echo json_encode(['success' => true]);
 
 function handleMessage($message) {
-    $phone = $message['fromChat']['phoneNumber'];
+    $phone = extractPhone($message['fromChat']);
     $body = $message['body'];
     error_log("New message from $phone: $body");
     // Store in database, trigger workflows, etc.
+}
+
+function extractPhone($chatObj) {
+    if (!$chatObj) return null;
+    
+    $chatId = $chatObj['id'] ?? '';
+    $phoneNumber = $chatObj['phoneNumber'] ?? null;
+    
+    // If ID is @lid format, use phoneNumber field
+    if (strpos($chatId, '@lid') !== false) {
+        return extractPhoneValue($phoneNumber);
+    }
+    
+    // If ID is @c.us format, it IS the phone number
+    if (strpos($chatId, '@c.us') !== false) {
+        return str_replace('@c.us', '', $chatId);
+    }
+    
+    // Fallback to phoneNumber field
+    return extractPhoneValue($phoneNumber);
+}
+
+function extractPhoneValue($phone) {
+    if (is_string($phone)) {
+        return str_replace(['@c.us', '@lid'], '', $phone);
+    }
+    if (is_array($phone) && isset($phone['_serialized'])) {
+        return str_replace(['@c.us', '@lid'], '', $phone['_serialized']);
+    }
+    return null;
 }
 
 function handleAck($ackInfo) {
@@ -387,6 +475,7 @@ For periodic full chat history synchronization:
 CREATE TABLE messages (
     id VARCHAR(255) PRIMARY KEY,
     chat_id VARCHAR(100) NOT NULL,
+    chat_id_type VARCHAR(10),         -- 'lid', 'c.us', 'g.us', 'newsletter'
     from_phone VARCHAR(50),
     to_phone VARCHAR(50),
     body TEXT,
@@ -401,10 +490,13 @@ CREATE TABLE messages (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     INDEX idx_chat_id (chat_id),
+    INDEX idx_chat_id_type (chat_id_type),
     INDEX idx_timestamp (timestamp),
     INDEX idx_from_phone (from_phone)
 );
 ```
+
+**Note:** Store `chat_id_type` to know whether to look for phone in ID or phoneNumber field.
 
 ### Reactions Table
 

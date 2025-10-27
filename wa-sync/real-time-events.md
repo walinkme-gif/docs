@@ -78,10 +78,16 @@ This document details all real-time webhook events sent by WA-Sync.
 **Key Fields:**
 - `body` - Message text content
 - `type` - Always "chat" for text messages
-- `fromChat.phoneNumber` - Sender's phone number (string or object with `_serialized`)
+- `fromChat.id` - Sender's chat ID (can be `@lid` or `@c.us` format)
+- `fromChat.phoneNumber` - Phone number (in `@c.us` format when ID is `@lid`)
 - `toChat.phoneNumber` - Recipient's phone number
 - `notifyName` - Sender's display name in WhatsApp
 - `links` - Array of extracted links with suspicious link detection
+
+**Important: ID vs Phone Number**
+- If `fromChat.id` ends with `@lid` → Phone number is in `phoneNumber` field as `@c.us`
+- If `fromChat.id` ends with `@c.us` → The ID itself is the phone number
+- Phone numbers may be strings (`"1234567890@c.us"`) or objects (`{"_serialized": "1234567890@c.us"}`)
 
 ### Image Message
 
@@ -128,12 +134,13 @@ This document details all real-time webhook events sent by WA-Sync.
 ```
 
 **Important Notes About Images:**
-- `body` is **base 64** for image messages
+- `body` is **base64** for image messages
 - `caption` contains the image caption (if any)
-- **NO base64 image data is included**
+- **NO base64 image data is included in webhook**
 - Use `mediaKey`, `directPath`, and `encFilehash` for media download
 - `size` is in bytes
 - `width` and `height` in pixels
+- `fromChat.id` can be `@lid` or `@c.us` format (see ID explanation above)
 
 ### Video Message
 
@@ -337,11 +344,12 @@ This document details all real-time webhook events sent by WA-Sync.
 
 **Group Message Fields:**
 - `from` - Group ID (ends with `@g.us`)
-- `author` - Actual sender's ID
+- `author` - Actual sender's ID (can be `@lid` or `@c.us`)
 - `participant` - Same as author
 - `isGroupMsg` - true
 - `mentionedIds` - Array of @mentioned user IDs
-- `fromChat.phoneNumber` - null for groups
+- `fromChat.phoneNumber` - null for groups (groups don't have phone numbers)
+- Individual participant IDs can be `@lid` or `@c.us` format
 
 ### Message with Quote/Reply
 

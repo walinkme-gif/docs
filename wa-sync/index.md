@@ -127,6 +127,36 @@ Real-world webhook payload examples and integration patterns:
 
 ---
 
+## Important: Chat IDs & Phone Numbers
+
+⚠️ **WhatsApp uses two ID formats - This is critical for phone number extraction!**
+
+### LID Format (Newer Accounts)
+```json
+{
+  "id": "1234567890@lid",          // LID identifier
+  "phoneNumber": "1234567890@c.us" // Phone number here
+}
+```
+**If `id` ends with `@lid`** → Get phone number from `phoneNumber` field
+
+### Classic Format (Traditional Accounts)
+```json
+{
+  "id": "1234567890@c.us",         // ID IS the phone number
+  "phoneNumber": "1234567890@c.us" // Same value
+}
+```
+**If `id` ends with `@c.us`** → The `id` itself is the phone number
+
+### Groups & Channels
+- Groups: `123456789@g.us` (no phone number)
+- Channels: `1234567890@newsletter` (no phone number)
+
+📖 See [Overview](overview.md) for detailed explanation and code examples.
+
+---
+
 ## Use Cases
 
 ### Customer Support
@@ -195,7 +225,7 @@ Real-world webhook payload examples and integration patterns:
       "hasMedia": false,
       "fromChat": {
         "id": "1234567890@c.us",
-        "phoneNumber": "+1234567890"
+        "phoneNumber": "+1234567890@c.us"
       },
       "toChat": {
         "id": "0987654321@c.us",

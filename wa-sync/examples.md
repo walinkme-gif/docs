@@ -255,9 +255,31 @@ async function handleCall(callData) {
 // Helper Functions
 function extractPhone(chatObj) {
   if (!chatObj) return null;
-  const phone = chatObj.phoneNumber;
-  if (typeof phone === 'string') return phone;
-  if (phone && phone._serialized) return phone._serialized;
+  
+  const chatId = chatObj.id || '';
+  const phoneNumber = chatObj.phoneNumber;
+  
+  // If ID is @lid format, use phoneNumber field which will be @c.us
+  if (chatId.includes('@lid')) {
+    return extractPhoneValue(phoneNumber);
+  }
+  
+  // If ID is @c.us format, it IS the phone number
+  if (chatId.includes('@c.us')) {
+    return chatId.replace('@c.us', '');
+  }
+  
+  // Fallback to phoneNumber field
+  return extractPhoneValue(phoneNumber);
+}
+
+function extractPhoneValue(phone) {
+  if (typeof phone === 'string') {
+    return phone.replace('@c.us', '').replace('@lid', '');
+  }
+  if (phone && phone._serialized) {
+    return phone._serialized.replace('@c.us', '').replace('@lid', '');
+  }
   return null;
 }
 
@@ -555,13 +577,29 @@ def extract_message_id(id_obj):
     return None
 
 def extract_phone(chat_obj):
+    """Extract phone number handling @lid and @c.us formats"""
     if not chat_obj:
         return None
-    phone = chat_obj.get('phoneNumber')
+    
+    chat_id = chat_obj.get('id', '')
+    phone_number = chat_obj.get('phoneNumber')
+    
+    # If ID is @lid format, use phoneNumber field which will be @c.us
+    if '@lid' in chat_id:
+        return extract_phone_value(phone_number)
+    
+    # If ID is @c.us format, it IS the phone number
+    if '@c.us' in chat_id:
+        return chat_id.replace('@c.us', '')
+    
+    # Fallback to phoneNumber field
+    return extract_phone_value(phone_number)
+
+def extract_phone_value(phone):
     if isinstance(phone, str):
-        return phone
+        return phone.replace('@c.us', '').replace('@lid', '')
     if isinstance(phone, dict):
-        return phone.get('_serialized')
+        return phone.get('_serialized', '').replace('@c.us', '').replace('@lid', '')
     return None
 
 def extract_media_info(message):

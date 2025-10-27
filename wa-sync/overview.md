@@ -10,8 +10,43 @@ nav_order: 2
 **Version:** 1.0.0  
 **Last Updated:** October 27, 2025
 
-## Table of Contents
-{: .no_toc .text-delta }
+## Table o### Phone Number and ID Extraction
+
+**Important:** WhatsApp uses two types of identifiers:
+
+1. **LID (Local Identifier)** - Format: `1234567890@lid`
+   - Newer WhatsApp account format
+   - When `id` is `@lid`, the `phoneNumber` field contains the actual phone number in `@c.us` format
+
+2. **Classic ID** - Format: `1234567890@c.us`
+   - Traditional WhatsApp format
+   - When `id` is `@c.us`, it directly represents the phone number
+   - The `phoneNumber` field may repeat the same value
+
+**Example with LID:**
+```json
+{
+  "fromChat": {
+    "id": "1234567890@lid",          // LID format
+    "phoneNumber": "1234567890@c.us" // Phone number in @c.us format
+  }
+}
+```
+
+**Example with Classic ID:**
+```json
+{
+  "fromChat": {
+    "id": "1234567890@c.us",         // Direct phone number
+    "phoneNumber": "1234567890@c.us" // Same as ID
+  }
+}
+```
+
+**To get the phone number:**
+- If `id` ends with `@lid` → Use `phoneNumber` field (will be in `@c.us` format)
+- If `id` ends with `@c.us` → Use `id` directly (it IS the phone number)
+- Phone numbers can be in format `"1234567890@c.us"` or as an object `{"_serialized": "1234567890@c.us"}`_toc .text-delta }
 
 1. TOC
 {:toc}
@@ -160,11 +195,21 @@ Use `id._serialized` || `id` to uniquely identify messages across all events.
 
 ### Chat ID Formats
 
-- **Personal Chat:** `1234567890@c.us`
-- **Group Chat:** `123456789-1234567890@g.us`
-- **Channel:** `1234567890@newsletter`
+WhatsApp uses different ID formats depending on chat type and account age:
 
-You can identify chat types by the domain suffix.
+**Personal Chats:**
+- **LID Format:** `1234567890@lid` (newer accounts)
+  - When ID is `@lid`, check `phoneNumber` field for `@c.us` format
+- **Classic Format:** `1234567890@c.us` (traditional accounts)
+  - ID directly represents the phone number
+
+**Group Chats:** 
+- `123456789-1234567890@g.us`
+
+**Channels/Newsletters:** 
+- `1234567890@newsletter`
+
+You can identify chat types by the domain suffix (`@lid`, `@c.us`, `@g.us`, `@newsletter`).
 
 ### Phone Number Extraction
 
@@ -173,7 +218,7 @@ From the code analysis, phone numbers are available in:
 {
   "fromChat": {
     "id": "1234567890@c.us",
-    "phoneNumber": "+1234567890"  // May be serialized as object
+    "phoneNumber": "+1234567890@c.us"  // May be serialized as object
   },
   "toChat": {
     "id": "0987654321@c.us",
@@ -182,7 +227,7 @@ From the code analysis, phone numbers are available in:
 }
 ```
 
-Note: Phone numbers can be in format `"+1234567890"` or as an object `{"_serialized": "+1234567890"}`
+Note: Phone numbers can be in format `"+1234567890@c.us"` or as an object `{"_serialized": "+1234567890@c.us"}`
 
 ### Media Handling
 
