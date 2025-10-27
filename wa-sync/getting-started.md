@@ -607,7 +607,3 @@ async function searchMessages(query) {
 - 📖 Explore [Real-Time Events](real-time-events.md) for detailed event structures
 - 🔄 Learn about [Batch Sync](batch-sync.md) for historical data
 - 💡 Check out [Examples](examples.md) for more integration patterns
-
----
-
-**Questions?** [Open an issue on GitHub](https://github.com/piyush-hack/wa-sync/issues)

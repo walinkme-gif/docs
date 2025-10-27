@@ -35,7 +35,7 @@ The site will be generated in the `_site` directory.
 ## Documentation Structure
 
 - `index.md` - Homepage and introduction
-- `overview.md` - Architecture and configuration overview
+- `overview.md` - configuration overview
 - `real-time-events.md` - Detailed event documentation
 - `batch-sync.md` - Batch synchronization guide
 - `getting-started.md` - Integration tutorial

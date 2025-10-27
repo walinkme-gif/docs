@@ -725,6 +725,3 @@ messageQueue.process(async (job) => {
 });
 ```
 
----
-
-**Need more examples?** [Check the GitHub repository](https://github.com/piyush-hack/wa-sync)

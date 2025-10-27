@@ -14,7 +14,6 @@ Transform WhatsApp Web into a real-time webhook API
 {: .fs-6 .fw-300 }
 
 [Get Started](#quick-start){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
-[View on GitHub](https://github.com/piyush-hack/wa-sync){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ---
 
@@ -83,7 +82,7 @@ That's it! You'll now receive real-time events from WhatsApp Web.
 
 ### [📖 Overview](overview.md)
 
-Complete introduction to WA-Sync architecture, configuration options, and webhook setup. Learn about:
+Complete introduction to WA-Sync, configuration options, and webhook setup. Learn about:
 - How WA-Sync works
 - Webhook configuration
 - Supported events overview
@@ -156,42 +155,6 @@ Real-world webhook payload examples and integration patterns:
 
 ---
 
-## Architecture Overview
-
-```
-┌─────────────────┐
-│  WhatsApp Web   │
-└────────┬────────┘
-         │ Events
-         ▼
-┌─────────────────┐
-│ Injected Scripts│
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Content Bridge  │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Service Worker  │
-│  - Filters      │
-│  - Retry Logic  │
-│  - Batching     │
-└────────┬────────┘
-         │ HTTPS POST
-         ▼
-┌─────────────────┐
-│  Your Webhook   │
-│  - Process      │
-│  - Store        │
-│  - Respond      │
-└─────────────────┘
-```
-
----
-
 ## Event Types at a Glance
 
 | Category | Events | Description |
@@ -251,14 +214,6 @@ Real-world webhook payload examples and integration patterns:
 - Active WhatsApp Web session
 - HTTPS webhook endpoint (recommended for production)
 - Server capable of handling POST requests
-
----
-
-## Support & Contributing
-
-- **Issues**: [GitHub Issues](https://github.com/piyush-hack/wa-sync/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/piyush-hack/wa-sync/discussions)
-- **Email**: [Contact](mailto:support@example.com)
 
 ---
 

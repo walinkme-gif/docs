@@ -24,17 +24,6 @@ WA-Sync is a Chrome extension that forwards WhatsApp Web events to your configur
 
 ## How It Works
 
-### Architecture
-
-```
-WhatsApp Web → Injected Scripts → Content Bridge → Service Worker → Your Webhook
-```
-
-1. **Injected Scripts** - Run in WhatsApp Web's page context, capture events
-2. **Content Bridge** - Forwards events from page to extension
-3. **Service Worker** - Processes events, applies filters, sends to webhook
-4. **Your Webhook** - Receives POST requests with JSON payloads
-
 ### Two Modes of Operation
 
 #### 1. Real-Time Event Streaming (Auto-Send)
